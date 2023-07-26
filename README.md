@@ -20,4 +20,6 @@ Used these authentication instances to execute the following sign-in/sign-out fu
 
 `signOut` signs the current user out.
 
+Handled authentication errors with console.logs specific to the error codes.
+
 
