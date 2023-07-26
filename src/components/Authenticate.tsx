@@ -22,7 +22,13 @@ export const Authenticate: React.FC = () => {
       console.log('Successfully signed in!')
     } catch (error: unknown) {
       if (error instanceof FirebaseError) {
+        if (error.code === "auth/wrong-password") {
+          console.log("Incorrect Password!")
+        } else if (error.code === "auth/user-not-found") {
+          console.log("No user with that email found!")
+        } else {
         console.error('Error signing in user', error.message as string)
+        }
       }
     }
   }
@@ -33,7 +39,13 @@ export const Authenticate: React.FC = () => {
       console.log('Successfully created user!')
     } catch (error: unknown) {
       if (error instanceof FirebaseError) {
+        if (error.code === "auth/email-already-in-use") {
+          console.log('A user with that email address already exists!')
+        } else if (error.code === "auth/invalid-email") {
+          console.log('Must enter a valid email!')
+        } else {
         console.error('Error creating User:', error.message as string)
+        }
       }
     }
   }
@@ -74,7 +86,7 @@ export const Authenticate: React.FC = () => {
       <input
         placeholder="Password..."
         type="password"
-        onChange={handlePasswordChange} 
+        onChange={handlePasswordChange}
       />
       <button onClick={signIn}>Sign In</button>
       <button onClick={createAccount}>Create Account</button>
