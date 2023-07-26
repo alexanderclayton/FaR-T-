@@ -3,8 +3,7 @@ import { Authenticate } from './components/Authenticate'
 import './App.css'
 
 import { initializeApp, FirebaseApp } from 'firebase/app'
-import { getAuth, Auth} from 'firebase/auth'
-import { GoogleAuthProvider } from 'firebase/auth'
+import { getAuth, GoogleAuthProvider, Auth} from 'firebase/auth'
 
 interface FirebaseConfig {
   apiKey: string;
