@@ -2,7 +2,7 @@ import { useState, ChangeEvent } from 'react'
 import { FirebaseError } from 'firebase/app'
 import { doc, updateDoc } from 'firebase/firestore'
 import { db } from '../App'
-import { FirestoreData } from './Firestore'
+import { FirestoreData } from '../utils/FirestoreUtils'
 
 interface FirestoreItemProps {
     data: FirestoreData

@@ -3,7 +3,11 @@ import { auth, authProvider } from '../App'
 import { signInWithEmailAndPassword, createUserWithEmailAndPassword, signInWithPopup, signOut } from 'firebase/auth'
 import { FirebaseError } from 'firebase/app'
 
-export const Authenticate: React.FC = () => {
+interface AuthenticateProps {
+  onLoginLogout: () => void
+}
+
+export const Authenticate: React.FC<AuthenticateProps> = ({ onLoginLogout }) => {
 
   const [email, setEmail] = useState<string>("")
   const [password, setPassword] = useState<string>("")
@@ -39,6 +43,7 @@ export const Authenticate: React.FC = () => {
         }
       }
     }
+    onLoginLogout()
   }
 
   const createAccount = async (): Promise<void> => {
@@ -59,6 +64,7 @@ export const Authenticate: React.FC = () => {
         }
       }
     }
+    onLoginLogout()
   }
 
   const signInWithGoogle = async (): Promise<void> => {
@@ -73,6 +79,7 @@ export const Authenticate: React.FC = () => {
         setMessage(`Error signing in user: ${error.code}`)
       }
     }
+    onLoginLogout()
   }
 
   const logout = async (): Promise<void> => {
@@ -85,6 +92,7 @@ export const Authenticate: React.FC = () => {
         setMessage(`Error signing out user: ${error.code}`)
       }
     }
+    onLoginLogout()
   }
 
   const who = () => {
