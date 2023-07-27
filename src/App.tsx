@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState, useEffect } from 'react'
 import { Authenticate } from './components/Authenticate'
 import { Firestore } from './components/Firestore'
 import './App.css'
@@ -35,13 +35,29 @@ authProvider.setCustomParameters({
 })
 export const db = getFirestore(firebaseApp)
 
+
 const App: React.FC = () => {
+  const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false)
+
+  const handleLoginLogout = () => {
+    setIsLoggedIn(!!auth.currentUser)
+  }
+
+  useEffect(() => {
+    const unsubscribe = auth.onAuthStateChanged((user) => {
+      setIsLoggedIn(!!user)
+    })
+
+    return () => {
+      unsubscribe()
+    }
+  }, [])
 
   return (
     <div className="App">
-      <h1>FaR(T) Chat</h1>
-      <Authenticate />
-      <Firestore />
+      <h1>FaR(T)</h1>
+      <Authenticate onLoginLogout={handleLoginLogout} />
+      {isLoggedIn && <Firestore />}
     </div>
   )
 }

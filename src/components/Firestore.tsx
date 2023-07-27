@@ -1,27 +1,16 @@
-import React, { useEffect, useState, ChangeEvent } from 'react'
-import { db } from '../App'
+import React, { useState, ChangeEvent } from 'react'
+import { auth, db } from '../App'
 import { FirestoreItem } from './FirestoreItem'
+import { useFirestoreData, FirestoreData } from '../utils/FirestoreUtils'
 import {
-    getDocs,
     addDoc,
     deleteDoc,
     doc,
-    collection,
     CollectionReference,
     DocumentData,
-    QuerySnapshot
+    collection
 } from 'firebase/firestore'
 import { FirebaseError } from 'firebase/app'
-
-interface FirestoreDocumentData {
-    string: string
-    number: number
-    bool: boolean
-}
-
-export interface FirestoreData extends FirestoreDocumentData {
-    id: string
-}
 
 export const Firestore: React.FC = () => {
 
@@ -48,41 +37,26 @@ export const Firestore: React.FC = () => {
         console.log("String:", stringValue, "Number:", numberValue, "Boolean:", boolValue)
     }
 
-    const [firestoreData, setFirestoreData] = useState<FirestoreData[]>([])
-    const testCollectionRef: CollectionReference<DocumentData> = collection(db, "testdata")
-
-    const getFirestoreData = async () => {
-        try {
-            const data: QuerySnapshot<DocumentData> = await getDocs(testCollectionRef)
-            const filteredData: FirestoreData[] = data.docs.map((doc) => ({
-                ...doc.data() as FirestoreDocumentData,
-                id: doc.id
-            }))
-            console.log(filteredData)
-            setFirestoreData(filteredData)
-        } catch (error: unknown) {
-            if (error instanceof FirebaseError) {
-                console.error(error.message as string)
-            }
-        }
-    }
-
-    useEffect(() => {
-        getFirestoreData()
-    }, [])
+   const [firestoreData, getFirestoreData] = useFirestoreData()
+   const testCollectionRef: CollectionReference<DocumentData> = collection(db, "testdata")
 
     const addItemToFirebase = async (): Promise<void> => {
         try {
             await addDoc(testCollectionRef, {
                 string: stringValue,
                 number: numberValue,
-                bool: boolValue
+                bool: boolValue,
+                userId: auth?.currentUser?.uid
             })
             setResult("Item successfully added to Firebase!")
             getFirestoreData()
         } catch (error: unknown) {
             if (error instanceof FirebaseError) {
-                console.error(error.message as string)
+                if (error.code === "invalid-argument") {
+                    setResult("Must be logged in to add items to database!")
+                } else {
+                    console.error(error.message as string)
+                }
             }
         }
     }
@@ -103,13 +77,13 @@ export const Firestore: React.FC = () => {
     return (
         <div>
             <div>
-                {firestoreData.map((data => (
-                    <FirestoreItem 
-                    key={data.id}
-                    data={data}
-                    onUpdate={() => getFirestoreData()}
-                    onDelete={() => deleteItemFromFirebase(data.id)}/>
-                )))}
+                {firestoreData.map((data: FirestoreData) => (
+                    <FirestoreItem
+                        key={data.id}
+                        data={data}
+                        onUpdate={getFirestoreData}
+                        onDelete={() => deleteItemFromFirebase(data.id)} />
+                ))}
             </div>
             <div>
                 <input
