@@ -31,6 +31,8 @@ export const Authenticate: React.FC = () => {
           setMessage("No user with that email found!")
         } else if (error.code === "auth/invalid-email") {
           setMessage("Must enter a valid email!")
+        } else if (error.code === "auth/popup-closed-by-user") {
+          setMessage("Popup closed before signing in user!")
         } else {
           console.error('Error signing in user', error.message as string)
           setMessage(`Error signing in user: ${error.code}`)

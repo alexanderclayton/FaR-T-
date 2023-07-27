@@ -1,9 +1,11 @@
 import React from 'react'
 import { Authenticate } from './components/Authenticate'
+import { Firestore } from './components/Firestore'
 import './App.css'
 
 import { initializeApp, FirebaseApp } from 'firebase/app'
 import { getAuth, GoogleAuthProvider, Auth} from 'firebase/auth'
+import { getFirestore } from 'firebase/firestore'
 
 interface FirebaseConfig {
   apiKey: string;
@@ -31,6 +33,7 @@ export const authProvider = new GoogleAuthProvider()
 authProvider.setCustomParameters({
   prompt: 'select_account',
 })
+export const db = getFirestore(firebaseApp)
 
 const App: React.FC = () => {
 
@@ -38,6 +41,7 @@ const App: React.FC = () => {
     <div className="App">
       <h1>FaR(T) Chat</h1>
       <Authenticate />
+      <Firestore />
     </div>
   )
 }
