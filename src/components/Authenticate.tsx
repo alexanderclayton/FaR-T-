@@ -7,6 +7,7 @@ export const Authenticate: React.FC = () => {
 
   const [email, setEmail] = useState<string>("")
   const [password, setPassword] = useState<string>("")
+  const [message, setMessage] = useState<string>("")
 
   const handleEmailChange = (e: ChangeEvent<HTMLInputElement>) => {
     setEmail(e.target.value)
@@ -19,15 +20,20 @@ export const Authenticate: React.FC = () => {
   const signIn = async (): Promise<void> => {
     try {
       await signInWithEmailAndPassword(auth, email, password)
-      console.log('Successfully signed in!')
+      setMessage("Successfully signed in!")
+      setEmail("")
+      setPassword("")
     } catch (error: unknown) {
       if (error instanceof FirebaseError) {
         if (error.code === "auth/wrong-password") {
-          console.log("Incorrect Password!")
+          setMessage("Incorrect Password!")
         } else if (error.code === "auth/user-not-found") {
-          console.log("No user with that email found!")
+          setMessage("No user with that email found!")
+        } else if (error.code === "auth/invalid-email") {
+          setMessage("Must enter a valid email!")
         } else {
-        console.error('Error signing in user', error.message as string)
+          console.error('Error signing in user', error.message as string)
+          setMessage(`Error signing in user: ${error.code}`)
         }
       }
     }
@@ -36,15 +42,18 @@ export const Authenticate: React.FC = () => {
   const createAccount = async (): Promise<void> => {
     try {
       await createUserWithEmailAndPassword(auth, email, password)
-      console.log('Successfully created user!')
+      setMessage("Successfully created user!")
+      setEmail("")
+      setPassword("")
     } catch (error: unknown) {
       if (error instanceof FirebaseError) {
         if (error.code === "auth/email-already-in-use") {
-          console.log('A user with that email address already exists!')
+          setMessage("A user with that email address already exists!")
         } else if (error.code === "auth/invalid-email") {
-          console.log('Must enter a valid email!')
+          setMessage("Must enter a valid email!")
         } else {
-        console.error('Error creating User:', error.message as string)
+          console.error('Error creating User:', error.message as string)
+          setMessage(`Error creating user: ${error.code}`)
         }
       }
     }
@@ -53,10 +62,13 @@ export const Authenticate: React.FC = () => {
   const signInWithGoogle = async (): Promise<void> => {
     try {
       await signInWithPopup(auth, authProvider)
-      console.log('Successfully created user!')
+      setMessage("Successfully created user!")
+      setEmail("")
+      setPassword("")
     } catch (error: unknown) {
       if (error instanceof FirebaseError) {
         console.error('Error creating user', error.message as string)
+        setMessage(`Error creating user: ${error.code}`)
       }
     }
   }
@@ -64,27 +76,34 @@ export const Authenticate: React.FC = () => {
   const logout = async (): Promise<void> => {
     try {
       await signOut(auth)
-      console.log('Successfully logged user out!')
+      setMessage("Successfully logged user out!")
     } catch (error: unknown) {
       if (error instanceof FirebaseError) {
         console.error('Error signing out user', error.message as string)
+        setMessage(`Error signing out user: ${error.code}`)
       }
     }
   }
 
   const who = () => {
-    console.log(auth?.currentUser?.email)
+    if (auth.currentUser === null) {
+      setMessage("Nobody's logged in :(")
+    } else {
+      setMessage(auth?.currentUser?.email as string)
+    }
   }
 
   return (
     <div>
       <input
         placeholder="Email..."
+        value={email}
         type="text"
         onChange={handleEmailChange}
       />
       <input
         placeholder="Password..."
+        value={password}
         type="password"
         onChange={handlePasswordChange}
       />
@@ -93,6 +112,7 @@ export const Authenticate: React.FC = () => {
       <button onClick={signInWithGoogle}>Sign In with Google</button>
       <button onClick={logout}>Logout</button>
       <button onClick={who}>Who's Logged In?</button>
+      <h4>{message}</h4>
     </div>
   )
 }
