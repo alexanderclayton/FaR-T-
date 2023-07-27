@@ -28,6 +28,9 @@ const firebaseConfig: FirebaseConfig = {
 const firebaseApp: FirebaseApp = initializeApp(firebaseConfig)
 export const auth: Auth = getAuth(firebaseApp)
 export const authProvider = new GoogleAuthProvider()
+authProvider.setCustomParameters({
+  prompt: 'select_account',
+})
 
 const App: React.FC = () => {
 
