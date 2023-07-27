@@ -24,4 +24,16 @@ Used these authentication instances to execute the following sign-in/sign-out fu
 
 Handled authentication errors with console.logs specific to the error codes.
 
+Setup CRUD operations:
+
+Created a new collection in Firestore.
+
+Used the `getDocs` method from 'firebase/firestore to retrieve all the data from the collection and render it to the page.
+
+Used the `addDoc` method to add an item to the existing collection.
+
+Used the `deleteDoc` method to delete and item from the collection.
+
+Used the `updateDoc` method to update a doc in the collection.
+
 
