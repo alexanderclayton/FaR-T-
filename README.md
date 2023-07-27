@@ -36,4 +36,6 @@ Used the `deleteDoc` method to delete and item from the collection.
 
 Used the `updateDoc` method to update a doc in the collection.
 
+Separated the array.map displaying each item in the Firestore into a separate component so the `updateDoc` method remained unique to the specific item the button renders with.
+
 

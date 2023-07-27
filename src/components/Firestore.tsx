@@ -1,10 +1,10 @@
 import React, { useEffect, useState, ChangeEvent } from 'react'
 import { db } from '../App'
+import { FirestoreItem } from './FirestoreItem'
 import {
     getDocs,
     addDoc,
     deleteDoc,
-    updateDoc,
     doc,
     collection,
     CollectionReference,
@@ -19,7 +19,7 @@ interface FirestoreDocumentData {
     bool: boolean
 }
 
-interface FirestoreData extends FirestoreDocumentData {
+export interface FirestoreData extends FirestoreDocumentData {
     id: string
 }
 
@@ -29,7 +29,6 @@ export const Firestore: React.FC = () => {
     const [numberValue, setNumberValue] = useState<number>(0)
     const [boolValue, setBoolValue] = useState<boolean>(false)
     const [result, setResult] = useState<string>("")
-    const [updatedString, setUpdatedString] = useState<string>("")
 
     const handleStringChange = (e: ChangeEvent<HTMLInputElement>) => {
         setStringValue(e.target.value)
@@ -47,10 +46,6 @@ export const Firestore: React.FC = () => {
 
     const values = (): void => {
         console.log("String:", stringValue, "Number:", numberValue, "Boolean:", boolValue)
-    }
-
-    const handleStringUpdate = (e: ChangeEvent<HTMLInputElement>) => {
-        setUpdatedString(e.target.value)
     }
 
     const [firestoreData, setFirestoreData] = useState<FirestoreData[]>([])
@@ -105,37 +100,15 @@ export const Firestore: React.FC = () => {
         }
     }
 
-    const updateStringValue = async (id: string): Promise<void> => {
-        try {
-            const updateItem = doc(db, "testdata", id)
-            await updateDoc(updateItem, { string: updatedString })
-            setResult("Successfully updated item!")
-            getFirestoreData()
-        } catch (error: unknown) {
-            if (error instanceof FirebaseError) {
-                console.error(error.message as string)
-            }
-        }
-        setUpdatedString("")
-    }
-
     return (
         <div>
             <div>
                 {firestoreData.map((data => (
-                    <div key={data.id}>
-                        <h1>String: {data.string}</h1>
-                        <h2>Number: {data.number}</h2>
-                        <h3>Bool: {data.bool.toString()}</h3>
-                        <input
-                            placeholder="Update String"
-                            value={updatedString}
-                            type="text"
-                            onChange={handleStringUpdate}
-                        />
-                        <button onClick={() => updateStringValue(data.id)}>Update String</button>
-                        <button onClick={() => deleteItemFromFirebase(data.id)}>Delete Item</button>
-                    </div>
+                    <FirestoreItem 
+                    key={data.id}
+                    data={data}
+                    onUpdate={() => getFirestoreData()}
+                    onDelete={() => deleteItemFromFirebase(data.id)}/>
                 )))}
             </div>
             <div>
