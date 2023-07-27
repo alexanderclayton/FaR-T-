@@ -62,13 +62,13 @@ export const Authenticate: React.FC = () => {
   const signInWithGoogle = async (): Promise<void> => {
     try {
       await signInWithPopup(auth, authProvider)
-      setMessage("Successfully created user!")
+      setMessage("Successfully signed in!")
       setEmail("")
       setPassword("")
     } catch (error: unknown) {
       if (error instanceof FirebaseError) {
-        console.error('Error creating user', error.message as string)
-        setMessage(`Error creating user: ${error.code}`)
+        console.error('Error signing in user', error.message as string)
+        setMessage(`Error signing in user: ${error.code}`)
       }
     }
   }
